@@ -54,4 +54,4 @@ jobs:
       - name: Increase and push version
         run : |
           awk -F, '$1=$1+1' OFS=, version > tmp && mv tmp version
-          git add version && git commit -m "bump-up-version" && git push
+          git add version && git commit -m "bump-up-version" && git push origin master
