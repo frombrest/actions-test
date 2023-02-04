@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 name: master-pipeline
+concurrency: master-build
 
 on:
   push:
@@ -12,11 +13,45 @@ on:
       - master
 
 jobs:
-  testing:
+  code-testing:
+    name: Run code testing and linting
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.sha }}
       - name: Run tests
         run : |
-          echo "One"
-          echo "Two"
+          sleep 7
           echo "Three"
+          sleep 1
+          echo "Two"
+          sleep 1
+          echo "One"
+          sleep 1
+          echo "Done!"
+  
+  new-release-tag:
+    name: Push release tag and bump-up version
+    runs-on: ubuntu-latest
+    needs: code-testing
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.sha }}
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+      - name: Setup Git
+        run : |
+          git config user.name 'Release bot'
+          git config user.email 'release@gmail.com'
+      - name: Create and push release tag
+        run : |
+          CUR_VAR=$(cat ./version)
+          git tag -a v${CUR_VAR} -m "Version ${CUR_VAR}"
+          git push origin v${CUR_VAR}
+      - name: Increase and push version
+        run : |
+          awk -F, '$1=$1+1' OFS=, version > tmp && mv tmp version
+          git add version && git commit -m "bump-up-version"
