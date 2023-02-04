@@ -1,0 +1,22 @@
+#-------------------------------------------------
+#
+#
+#
+#-------------------------------------------------
+
+name: master-pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run tests
+        run : |
+          echo "One"
+          echo "Two"
+          echo "Three"
