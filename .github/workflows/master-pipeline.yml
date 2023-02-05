@@ -53,5 +53,10 @@ jobs:
           git push origin v${CUR_VAR}
       - name: Increase and push version
         run : |
+          git checkout master && git pull
+          git checkout -b temp ${{ github.sha }}
           awk -F, '$1=$1+1' OFS=, version > tmp && mv tmp version
-          git add version && git commit -m "bump-up-version" && git push origin master
+          git commit -a -m "[auto generated] bump-up-version"
+          git rebase temp master
+          git branch -d temp
+          git push origin
