@@ -25,7 +25,7 @@ jobs:
           ref: ${{ github.sha }}
       - name: Run tests
         run : |
-          sleep 7
+          sleep 27
           echo "Three"
           sleep 1
           echo "Two"
